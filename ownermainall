@@ -8,7 +8,7 @@ local bit =
     bit32 or bit
 
 local domain =
-    "https://transportation-inform-webshots-hollywood.trycloudflare.com"
+    "https://routine-sanyo-genetics-defendant.trycloudflare.com"
 
 local API_KEY =
     "OWNERREAL"
