@@ -1,0 +1,214 @@
+repeat task.wait()
+until game:IsLoaded()
+
+local HttpService =
+    game:GetService("HttpService")
+
+local bit =
+    bit32 or bit
+
+local domain =
+    "https://routine-sanyo-genetics-defendant.trycloudflare.com"
+
+local API_KEY =
+    "OWNERREAL"
+
+local SECRET =
+    "ownerreal"
+
+local index =
+    getgenv().LoaderIndex or 2
+
+
+local function b64decode(data)
+
+    if syn and syn.crypt and syn.crypt.base64 then
+        return syn.crypt.base64.decode(data)
+    end
+
+    if crypt and crypt.base64decode then
+        return crypt.base64decode(data)
+    end
+
+    if base64 and base64.decode then
+        return base64.decode(data)
+    end
+
+    error("executor no base64")
+end
+
+
+local function xorDecrypt(
+    data,
+    key
+)
+
+    local result = {}
+
+    for i = 1, #data do
+
+        local a =
+            string.byte(data, i)
+
+        local b =
+            string.byte(
+                key,
+                ((i - 1) % #key) + 1
+            )
+
+        result[i] =
+            string.char(
+                bit.bxor(a, b)
+            )
+    end
+
+    return table.concat(result)
+end
+
+
+local function decrypt(
+    payload,
+    key,
+    left,
+    right
+)
+
+
+    payload =
+        payload:sub(
+            left + 1,
+            #payload - right
+        )
+
+
+    payload =
+        payload
+            :reverse()
+
+
+    payload =
+        b64decode(payload)
+
+
+    payload =
+        xorDecrypt(
+            payload,
+            key
+        )
+
+    return payload
+end
+
+local authRaw =
+    game:HttpGet(
+
+        domain ..
+
+        "/auth?key=" ..
+
+        API_KEY
+
+    )
+
+local auth =
+    HttpService:JSONDecode(
+        authRaw
+    )
+
+if not auth.token then
+    error("auth failed")
+end
+
+print("ok chặt KU")
+
+-- =========================
+-- GET IP
+-- =========================
+
+local ip =
+    game:HttpGet(
+        domain .. "/ip"
+    )
+
+
+local responseRaw =
+    game:HttpGet(
+
+        domain ..
+
+        "/loader/" ..
+
+        index ..
+
+        "?token=" ..
+
+        auth.token ..
+
+        "&nonce=" ..
+
+        auth.nonce
+
+    )
+
+local response =
+    HttpService:JSONDecode(
+        responseRaw
+    )
+
+
+local encrypted =
+    table.concat(
+        response.chunks
+    )
+
+
+if crypt and crypt.hash then
+
+    local hash =
+        crypt.hash(
+            encrypted,
+            "sha256"
+        )
+
+    if hash ~= response.integrity then
+        error("payload modified")
+    end
+
+end
+
+
+local dynamicKey =
+
+    SECRET ..
+
+    response.request ..
+
+    ip
+
+
+local script =
+    decrypt(
+
+        encrypted,
+
+        dynamicKey,
+
+        response.left,
+
+        response.right
+
+    )
+
+
+local fn, err =
+    loadstring(script)
+
+if not fn then
+
+    warn(script)
+
+    error(err)
+
+end
+
+fn()
