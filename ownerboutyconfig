@@ -1,4 +1,5 @@
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+
 getgenv().config = {
     team = getgenv().Team,
     sea = getgenv().Sea,
@@ -9,7 +10,7 @@ getgenv().config = {
     safeHealth = 4500,
     attackSpeed = 0.001,
     blackScreen = false,
-    useSkill = false,
+    useSkill = true,
     equipPaleScarf = false,
     webhookurl = "",
     webhookEnable = false,
@@ -19,7 +20,10 @@ getgenv().config = {
     bpsit = true
 }
 loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/refs/heads/main/Bountynew.lua"))()
+
 local plr = game.Players.LocalPlayer
+local Vim = game:GetService("VirtualInputManager")
+
 task.spawn(function()
     while task.wait() do
         pcall(function()
@@ -28,15 +32,42 @@ task.spawn(function()
             and plr.Character:FindFirstChild("RaceTransformed") then
 
                 if not plr.Character.RaceTransformed.Value then
-                    game:GetService("VirtualInputManager")
-                        :SendKeyEvent(true,"Y",false,game)
-
+                    Vim:SendKeyEvent(true,"Y",false,game)
                     task.wait(.1)
-
-                    game:GetService("VirtualInputManager")
-                        :SendKeyEvent(false,"Y",false,game)
+                    Vim:SendKeyEvent(false,"Y",false,game)
                 end
             end
         end)
     end
 end)
+
+local function Press(key)
+    Vim:SendKeyEvent(true, key, false, game)
+    task.wait(0.1)
+    Vim:SendKeyEvent(false, key, false, game)
+end
+
+local function UseSkill(key, toggle, cooldown)
+    task.spawn(function()
+        while task.wait(0.2) do
+            pcall(function()
+
+                if not getgenv().config.useSkill then
+                    return
+                end
+
+                if getgenv()[toggle] then
+                    Press(key)
+                    task.wait(cooldown)
+                end
+
+            end)
+        end
+    end)
+end
+
+UseSkill("Z", "SkillZ", 1)
+UseSkill("X", "SkillX", 2)
+UseSkill("C", "SkillC", 3)
+UseSkill("V", "SkillV", 4)
+UseSkill("F", "SkillF", 5)
