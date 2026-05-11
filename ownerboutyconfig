@@ -19,16 +19,24 @@ getgenv().config = {
     bpsit = true
 }
 loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/refs/heads/main/Bountynew.lua"))()
-spawn(function()
-	while wait(.2) do
-		pcall(function()
-			if getgenv().V4 then
-				if plr.Character:FindFirstChild("RaceEnergy") then
-					if plr.Character.RaceEnergy.Value == 1 then
-						Useskills("nil", "Y")
-					end
-				end
-			end
-		end)
-	end
+local plr = game.Players.LocalPlayer
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            if getgenv().V4
+            and plr.Character
+            and plr.Character:FindFirstChild("RaceTransformed") then
+
+                if not plr.Character.RaceTransformed.Value then
+                    game:GetService("VirtualInputManager")
+                        :SendKeyEvent(true,"Y",false,game)
+
+                    task.wait(.1)
+
+                    game:GetService("VirtualInputManager")
+                        :SendKeyEvent(false,"Y",false,game)
+                end
+            end
+        end)
+    end
 end)
