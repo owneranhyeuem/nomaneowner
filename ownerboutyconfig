@@ -1,0 +1,22 @@
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+getgenv().config = {
+    team = getgenv().Team,
+    mode = getgenv().Mode,
+    sea = getgenv().Sea,
+    region = getgenv().Region,
+    hpTimeout = 15,
+    targetTimeout = 20,
+    lowHealth = 4000,
+    safeHealth = 4500,
+    attackSpeed = 0.001,
+    blackScreen = false,
+    useSkill = false,
+    equipPaleScarf = false,
+    webhookurl = "",
+    webhookEnable = false,
+    webhookSendMinutes = 5,
+    trans = false,
+    bltween = true,
+    bpsit = true
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/refs/heads/main/Bountynew.lua"))()
