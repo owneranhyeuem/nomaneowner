@@ -1,7 +1,6 @@
 repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
 getgenv().config = {
     team = getgenv().Team,
-    mode = getgenv().Mode,
     sea = getgenv().Sea,
     region = getgenv().Region,
     hpTimeout = 15,
