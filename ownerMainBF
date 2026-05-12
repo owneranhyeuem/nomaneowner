@@ -1,6 +1,4 @@
 if getgenv().AutoExecutor then
-    local HttpService = game:GetService("HttpService")
-    local TeleportService = game:GetService("TeleportService")
     local Players = game:GetService("Players")
 
     local LocalPlayer = Players.LocalPlayer
@@ -30,7 +28,6 @@ if getgenv().AutoExecutor then
 
         LocalPlayer.OnTeleport:Connect(function(State)
             if State == Enum.TeleportState.Started then
-
                 for i = 1, 50 do
                     ApplyQueue()
                     task.wait(0.1)
@@ -38,17 +35,10 @@ if getgenv().AutoExecutor then
             end
         end)
 
-        game:BindToClose(function()
-            for i = 1, 50 do
-                ApplyQueue()
-                task.wait()
-            end
-        end)
     else
         warn("AutoExecutor")
     end
 end
-
 local Services = setmetatable({}, {
     __index = function(self, serviceName)
         local service = game:GetService(serviceName)
