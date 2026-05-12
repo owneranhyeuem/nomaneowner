@@ -1,17 +1,49 @@
 if getgenv().AutoExecutor then
+    local HttpService = game:GetService("HttpService")
+    local TeleportService = game:GetService("TeleportService")
+    local Players = game:GetService("Players")
+
+    local LocalPlayer = Players.LocalPlayer
+
     local Script = [[
         repeat task.wait() until game:IsLoaded()
+
+        task.wait(2)
 
         loadstring(game:HttpGet("https://raw.githubusercontent.com/owneranhyeuem/nomaneowner/refs/heads/main/ownerMainBF"))()
     ]]
 
-    local queue =
+    local Queue =
         queue_on_teleport or
         (syn and syn.queue_on_teleport) or
         (fluxus and fluxus.queue_on_teleport)
 
-    if typeof(queue) == "function" then
-        queue(Script)
+    if typeof(Queue) == "function" then
+
+        local function ApplyQueue()
+            pcall(function()
+                Queue(Script)
+            end)
+        end
+
+        ApplyQueue()
+
+        LocalPlayer.OnTeleport:Connect(function(State)
+            if State == Enum.TeleportState.Started then
+
+                for i = 1, 50 do
+                    ApplyQueue()
+                    task.wait(0.1)
+                end
+            end
+        end)
+
+        game:BindToClose(function()
+            for i = 1, 50 do
+                ApplyQueue()
+                task.wait()
+            end
+        end)
     else
         warn("AutoExecutor")
     end
