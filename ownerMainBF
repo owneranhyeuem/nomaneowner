@@ -24,10 +24,8 @@ if getgenv().AutoExecutor then
             end)
         end
 
-        -- Queue sẵn
         ApplyQueue()
 
-        -- Requeue khi teleport/serverhop
         LocalPlayer.OnTeleport:Connect(function(State)
             if State == Enum.TeleportState.Started then
                 ApplyQueue()
