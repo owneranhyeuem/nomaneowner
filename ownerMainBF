@@ -1,0 +1,173 @@
+if getgenv().AutoExecutor then
+    local Script = [[
+        repeat task.wait() until game:IsLoaded()
+
+        loadstring(game:HttpGet(""))()
+    ]]
+
+    local queue =
+        queue_on_teleport or
+        (syn and syn.queue_on_teleport) or
+        (fluxus and fluxus.queue_on_teleport)
+
+    if typeof(queue) == "function" then
+        queue(Script)
+    else
+        warn("AutoExecutor")
+    end
+end
+
+local Services = setmetatable({}, {
+    __index = function(self, serviceName)
+        local service = game:GetService(serviceName)
+        rawset(self, serviceName, service)
+        return service
+    end
+})
+
+local CoreGui = Services.CoreGui
+local TweenService = Services.TweenService
+
+local NotifyGui = CoreGui:FindFirstChild("NM_Notify_Container")
+if not NotifyGui then
+    NotifyGui = Instance.new("ScreenGui")
+    NotifyGui.Name = "NM_Notify_Container"
+    NotifyGui.ResetOnSpawn = false
+    NotifyGui.Parent = CoreGui
+end
+
+local Layout = NotifyGui:FindFirstChildOfClass("UIListLayout")
+if not Layout then
+    Layout = Instance.new("UIListLayout")
+    Layout.Parent = NotifyGui
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.Padding = UDim.new(0, 5)
+    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+end
+
+local Padding = NotifyGui:FindFirstChildOfClass("UIPadding")
+if not Padding then
+    Padding = Instance.new("UIPadding")
+    Padding.Parent = NotifyGui
+    Padding.PaddingTop = UDim.new(0, 6)
+    Padding.PaddingRight = UDim.new(0, 6)
+end
+
+local function NotificacaoNightMystic(title, msg, duration)
+    duration = duration or 3
+    local icon = "rbxassetid://"
+
+    local Frame = Instance.new("Frame")
+    Frame.Parent = NotifyGui
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 0
+    Frame.BorderSizePixel = 0
+    Frame.Size = UDim2.new(0, 230, 0, 0)
+    Frame.AutomaticSize = Enum.AutomaticSize.Y
+    Frame.AnchorPoint = Vector2.new(1, 0)
+    Frame.Position = UDim2.new(1, 260, 0, 0)
+    Frame.LayoutOrder = -tick()
+    Frame.ZIndex = 1
+
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+
+    local stroke = Instance.new("UIStroke", Frame)
+    stroke.Color = Color3.fromRGB(255, 0, 0)
+    stroke.Thickness = 1.5
+    stroke.Transparency = 0
+
+    local Icon = Instance.new("ImageLabel")
+    Icon.Parent = Frame
+    Icon.BackgroundTransparency = 1
+    Icon.Position = UDim2.new(0, 6, 0, 6)
+    Icon.Size = UDim2.new(0, 36, 0, 36)
+    Icon.Image = icon
+    Icon.ZIndex = 2
+
+    local Title = Instance.new("TextLabel")
+    Title.Parent = Frame
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 46, 0, 4)
+    Title.Size = UDim2.new(1, -80, 0, 16)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = title
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 13
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.TextTruncate = Enum.TextTruncate.AtEnd
+    Title.ZIndex = 2
+
+    local Msg = Instance.new("TextLabel")
+    Msg.Parent = Frame
+    Msg.BackgroundTransparency = 1
+    Msg.Position = UDim2.new(0, 46, 0, 20)
+    Msg.Size = UDim2.new(1, -80, 0, 0)
+    Msg.AutomaticSize = Enum.AutomaticSize.Y
+    Msg.Font = Enum.Font.GothamMedium
+    Msg.Text = msg
+    Msg.TextColor3 = Color3.fromRGB(210, 210, 210)
+    Msg.TextSize = 11
+    Msg.TextXAlignment = Enum.TextXAlignment.Left
+    Msg.TextYAlignment = Enum.TextYAlignment.Top
+    Msg.TextWrapped = true
+    Msg.ZIndex = 2
+
+    local Timer = Instance.new("TextLabel")
+    Timer.Parent = Frame
+    Timer.BackgroundTransparency = 1
+    Timer.AnchorPoint = Vector2.new(1, 0)
+    Timer.Position = UDim2.new(1, -6, 0, 6)
+    Timer.Size = UDim2.new(0, 35, 0, 14)
+    Timer.Font = Enum.Font.GothamBold
+    Timer.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Timer.TextSize = 11
+    Timer.TextXAlignment = Enum.TextXAlignment.Right
+    Timer.ZIndex = 2
+
+    TweenService:Create(
+        Frame,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.new(1, 0, 0, 0)}
+    ):Play()
+
+    task.spawn(function()
+        local start = tick()
+
+        while true do
+            local left = duration - (tick() - start)
+
+            if left <= 0 then
+                break
+            end
+
+            Timer.Text = string.format("%.1f", left)
+            task.wait(0.1)
+        end
+    end)
+
+    task.delay(duration, function()
+        local tween = TweenService:Create(
+            Frame,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {Position = UDim2.new(1, 260, 0, 0)}
+        )
+
+        tween:Play()
+        tween.Completed:Wait()
+        Frame:Destroy()
+    end)
+end
+
+NotificacaoNightMystic("owneranhyeuem", "Load Script Success", 3)
+
+task.wait(3)
+
+--// Loading UI
+local ui = loadstring(game:HttpGet("https://raw.githubusercontent.com/owneranhyeuem/owneranhyeuem/refs/heads/main/ownerguiyzkr"))()
+
+local Window = ui:CreateWindow({
+    Title = "OWNER Hub",
+    Subtitle = "| DXKL | ",
+    Image = "rbxassetid://"
+})
