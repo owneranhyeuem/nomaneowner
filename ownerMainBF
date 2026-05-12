@@ -34,7 +34,7 @@ if getgenv().AutoExecutor then
         pcall(function()
             LocalPlayer.OnTeleport:Connect(function(State)
                 if State == Enum.TeleportState.Started then
-                    for i = 1, 50 do
+                    for i = 1, 1 do
                         ApplyQueue()
                         task.wait(0.1)
                     end
@@ -43,7 +43,7 @@ if getgenv().AutoExecutor then
         end)
 
     else
-        warn("Executor does not support queue_on_teleport")
+        warn("AutoExecutor")
     end
 end
 local Services = setmetatable({}, {
