@@ -11,7 +11,7 @@ if getgenv().AutoExecutor then
         repeat task.wait() until game:IsLoaded()
         repeat task.wait() until game.Players.LocalPlayer
         task.wait(3)
-
+        getgenv().modeLoad = 2
         loadstring(game:HttpGet("https://raw.githubusercontent.com/owneryeuem/owneranhyeuem/refs/heads/main/owneranhyeuemmainNew"))()
     ]]
 
