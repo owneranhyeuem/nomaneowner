@@ -1,16 +1,12 @@
 getgenv().SelectedTeam = getgenv().SelectedTeam or "Pirates"
 
 if getgenv().AutoExecutor then
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-
     repeat task.wait() until game:IsLoaded()
-    repeat task.wait() until LocalPlayer
 
     local Script = [[
         repeat task.wait() until game:IsLoaded()
         repeat task.wait() until game.Players.LocalPlayer
-        task.wait(3)
+        task.wait(5)
         getgenv().modeLoad = 2
         loadstring(game:HttpGet("https://raw.githubusercontent.com/owneryeuem/owneranhyeuem/refs/heads/main/owneranhyeuemmainNew"))()
     ]]
@@ -26,17 +22,9 @@ if getgenv().AutoExecutor then
             Queue(Script)
         end)
 
-        LocalPlayer.OnTeleport:Connect(function(State)
-            if State == Enum.TeleportState.Started then
-                pcall(function()
-                    Queue(Script)
-                end)
-            end
-        end)
-
         print("Auto Executor Loaded")
     else
-        warn("AutoExecutor")
+        warn("Executor không hỗ trợ queue_on_teleport")
     end
 end
 local Services = setmetatable({}, {
