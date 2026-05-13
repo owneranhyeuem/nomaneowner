@@ -1,3 +1,4 @@
+getgenv().SelectedTeam = getgenv().SelectedTeam or "Pirates"
 if getgenv().AutoExecutor then
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
@@ -24,8 +25,10 @@ if getgenv().AutoExecutor then
             end)
         end
 
+    
         ApplyQueue()
 
+    
         LocalPlayer.OnTeleport:Connect(function(State)
             if State == Enum.TeleportState.Started then
                 ApplyQueue()
@@ -179,14 +182,623 @@ local function NotificacaoNightMystic(title, msg, duration)
 end
 
 NotificacaoNightMystic("owneranhyeuem", "Load Script Success", 3)
-
 task.wait(3)
+--// team
+local player = game.Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local desiredTeam = getgenv().team or "Marines"
+
+if not player.Team or player.Team.Name ~= desiredTeam then
+    pcall(function()
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("SetTeam", desiredTeam)
+    end)
+end
+
+task.spawn(function()
+    task.wait(2)
+
+    local team = getgenv().SelectedTeam
+    if team then
+        pcall(function()
+            remote:InvokeServer("SetTeam", team)
+        end)
+
+        print("Auto selected team:", team)
+    end
+end)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("CommF_")
+
+local function SetTeam(team)
+    if player.Team and player.Team.Name == team then
+        print("Already in team:", team)
+        return
+    end
+
+    pcall(function()
+        remote:InvokeServer("SetTeam", team)
+    end)
+
+    task.wait(1)
+
+    if not player.Team or player.Team.Name ~= team then
+        pcall(function()
+            remote:InvokeServer("SetTeam", team)
+        end)
+    end
+end
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("CommF_")
+local function SetTeam(team)
+    getgenv().SelectedTeam = team
+
+    pcall(function()
+        remote:InvokeServer("SetTeam", team)
+    end)
+
+    print("Set & Saved Team:", team)
+end
 --// Loading UI
 local ui = loadstring(game:HttpGet("https://raw.githubusercontent.com/owneranhyeuem/owneranhyeuem/refs/heads/main/ownerguiyzkr"))()
-
 local Window = ui:CreateWindow({
     Title = "OWNER Hub",
-    Subtitle = "| DXKL | ",
+    Subtitle = "| DXKL | Block Fruit",
     Image = "rbxassetid://"
 })
+--// tabs
+local Server = Window:AddTab("Server Info")
+local Settings = Window:AddTab("Settings Farm")
+local Farm = Window:AddTab("Pull Farm")
+local Mastestry = Window:AddTab("Farm Mastestry")
+local Others = Window:AddTab("Farm Others")
+local Sea = Window:AddTab("Sea Event")
+local Player = Window:AddTab("Setting Player")
+local Esp = Window:AddTab("Setting Esp")
+local Teleport = Window:AddTab("Teleport")
+local Upgrade = Window:AddTab("Farm Upgrade Iteam")
+local Race = Window:AddTab("Upgrade Race")
+local Raid = Window:AddTab("Farm Raid")
+local Fruit = Window:AddTab("Farm Fruit")
+local Shop = Window:AddTab("Shop")
+--// TOGGLE
+local V1 = Server:AddLeftGroupbox("Status Serrver")
+local V2 = Server:AddLeftGroupbox("Shop Advanced")
+local V3 = Server:AddLeftGroupbox("Shop Mirage")
+local V4 = Settings:AddLeftGroupbox("Setup Team")
+local V5 = Settings:AddLeftGroupbox("Setup Farm")
+local V6 = Settings:AddLeftGroupbox("Setup Attack")
+local V7 = Settings:AddLeftGroupbox("Setup Active V3 V4")
+local V8 = Settings:AddLeftGroupbox("Setup AFK")
+local V9 = Farm:AddLeftGroupbox("Setting Farm Pull")
+local V10 = Farm:AddLeftGroupbox("Pull Farm Level")
+local V11 = Farm:AddLeftGroupbox("Auto Farm Ingredients")
+local V12 = Mastestry:AddLeftGroupbox("Auto Farm Mastestry Fruit")
+local V13 = Mastestry:AddLeftGroupbox("Auto Farm Mastestry Gun")
+local V14 = Others:AddLeftGroupbox("Auto Farm Boss")
+local V15 = Others:AddLeftGroupbox("Auto Farm Rip_Indra")
+local V16 = Others:AddLeftGroupbox("Auto Farm black beard")
+local V17 = Others:AddLeftGroupbox("Auto Farm Quest")
+local V18 = Sea:AddLeftGroupbox("Settings Sea Event")
+local V19 = Sea:AddLeftGroupbox("Auto Farm Sea Event")
+local V20 = Sea:AddLeftGroupbox("Auto skill Sea Event")
+local V21 = Player:AddLeftGroupbox("Settings Player")
+local V22 = Player:AddLeftGroupbox("Settings Player AimBot")
+local V23 = Esp:AddLeftGroupbox("Settings Esp")
+local V24 = Teleport:AddLeftGroupbox("Teleport")
+local V25 = Teleport:AddLeftGroupbox("Teleport Sea")
+local V26 = Upgrade:AddLeftGroupbox("Upgrade Iteam")
+local V27 = Race :AddLeftGroupbox("Upgrade Race")
+local V28 = Raid :AddLeftGroupbox("Farm Raid")
+local V29 = Fruit :AddLeftGroupbox("Farm Fruit")
+local V30 = Shop :AddLeftGroupbox("Shop")
+--// Logic
+local Time = V1:AddLabel("Loading Time Zone...")
+
+function UpdateOS()
+    local date = os.date("*t")
+    local hour = (date.hour) % 24
+    local ampm = hour < 12 and "AM" or "PM"
+
+    local timezone = string.format(
+        "%02i:%02i:%02i %s",
+        ((hour - 1) % 12) + 1,
+        date.min,
+        date.sec,
+        ampm
+    )
+
+    local datetime = string.format(
+        "%02d/%02d/%04d",
+        date.day,
+        date.month,
+        date.year
+    )
+
+    local LocalizationService = game:GetService("LocalizationService")
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+
+    local code = "??"
+
+    pcall(function()
+        code = LocalizationService:GetCountryRegionForPlayerAsync(player)
+    end)
+
+    Time:SetText(datetime .. " - " .. timezone .. " [ " .. code .. " ]")
+end
+
+spawn(function()
+    while wait(1) do
+        UpdateOS()
+    end
+end)
+
+local Timmessss = V1:AddLabel("Loading Game Time...")
+
+function UpdateTime()
+    local GameTime = math.floor(workspace.DistributedGameTime + 0.5)
+
+    local Hour = math.floor(GameTime / (60 ^ 2)) % 24
+    local Minute = math.floor(GameTime / 60) % 60
+    local Second = GameTime % 60
+
+    Timmessss:SetText(
+        Hour .. "h " ..
+        Minute .. "m " ..
+        Second .. "s"
+    )
+end
+
+spawn(function()
+    while wait(1) do
+        UpdateTime()
+    end
+end)
+
+local Miragecheck = V1:AddLabel("Mirage Island : ❌")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            if game.Workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") then
+                Miragecheck:SetText("Mirage Island : ✅")
+            else
+                Miragecheck:SetText("Mirage Island : ❌")
+            end
+        end)
+    end
+end)
+
+local Kitsunecheck = V1:AddLabel("Kitsune Island : ❌")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            if game:GetService("Workspace").Map:FindFirstChild("KitsuneIsland") then
+                Kitsunecheck:SetText("Kitsune Island : ✅")
+            else
+                Kitsunecheck:SetText("Kitsune Island : ❌")
+            end
+        end)
+    end
+end)
+local FM = V1:AddLabel("Moon : 0/5")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local moonId = game:GetService("Lighting").Sky.MoonTextureId
+
+            if moonId == "http://www.roblox.com/asset/?id=9709149431" then
+                FM:SetText("Moon : 5/5")
+            elseif moonId == "http://www.roblox.com/asset/?id=9709149052" then
+                FM:SetText("Moon : 4/5")
+            elseif moonId == "http://www.roblox.com/asset/?id=9709143733" then
+                FM:SetText("Moon : 3/5")
+            elseif moonId == "http://www.roblox.com/asset/?id=9709150401" then
+                FM:SetText("Moon : 2/5")
+            elseif moonId == "http://www.roblox.com/asset/?id=9709149680" then
+                FM:SetText("Moon : 1/5")
+            else
+                FM:SetText("Moon : 0/5")
+            end
+        end)
+    end
+end)
+local Bone = V1:AddLabel("Bones : 0")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local bones = game:GetService("ReplicatedStorage")
+                .Remotes
+                .CommF_
+                :InvokeServer("Bones", "Check")
+
+            Bone:SetText("Bones : " .. tostring(bones))
+        end)
+    end
+end)
+local UserLabel = V1:AddLabel("User : Loading...")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            UserLabel:SetText("User : " .. player.Name)
+        end)
+    end
+end)
+local TeamLabel = V1:AddLabel("Team : Loading...")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local player = game.Players.LocalPlayer
+
+            local team = player.Team and player.Team.Name or "None"
+
+            TeamLabel:SetText("Team : " .. team)
+        end)
+    end
+end)
+
+local LevelLabel = V1:AddLabel("Level : Loading...")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            local level = player.Data.Level.Value
+
+            LevelLabel:SetText("Level : " .. tostring(level))
+        end)
+    end
+end)
+
+local RaceLabel = V1:AddLabel("Race : Loading...")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            local race = player.Data.Race.Value
+
+            RaceLabel:SetText("Race : " .. tostring(race))
+        end)
+    end
+end)
+local FruitLabel = V1:AddLabel("Fruit : Loading...")
+
+spawn(function()
+    while wait(1) do
+        pcall(function()
+            local player = game.Players.LocalPlayer
+            local fruit = player.Data.DevilFruit.Value
+
+            FruitLabel:SetText("Fruit : " .. tostring(fruit))
+        end)
+    end
+end)
+local ExecutorLabel = V1:AddLabel("Executor : Detecting...")
+
+spawn(function()
+    while wait(5) do
+        pcall(function()
+
+            local executor = "Unknown"
+
+            if identifyexecutor then
+                executor = identifyexecutor()
+
+            elseif getexecutorname then
+                executor = getexecutorname()
+
+            elseif syn then
+                executor = "Synapse X"
+
+            elseif fluxus then
+                executor = "Fluxus"
+
+            elseif KRNL_LOADED then
+                executor = "KRNL"
+
+            elseif is_sirhurt_closure then
+                executor = "SirHurt"
+
+            elseif pebc_execute then
+                executor = "ProtoSmasher"
+
+            elseif secure_load then
+                executor = "Sentinel"
+
+            elseif WrapGlobal then
+                executor = "WeAreDevs"
+
+            elseif shadow_env then
+                executor = "Shadow"
+
+            elseif getrenv().CometLoaded then
+                executor = "Comet"
+
+            elseif getrenv().Oxygen then
+                executor = "Oxygen U"
+
+            elseif getrenv().Electron then
+                executor = "Electron"
+
+            elseif Fluxus then
+                executor = "Fluxus"
+
+            elseif wave then
+                executor = "Wave"
+
+            elseif codex then
+                executor = "Codex"
+
+            elseif delta then
+                executor = "Delta"
+
+            elseif ArceusX then
+                executor = "Arceus X"
+
+            elseif Evon then
+                executor = "Evon"
+
+            elseif celery then
+                executor = "Celery"
+
+            elseif nihon then
+                executor = "Nihon"
+
+            elseif Velocity then
+                executor = "Velocity"
+
+            elseif Macsploit then
+                executor = "MacSploit"
+            end
+
+            ExecutorLabel:SetText("Executor : " .. tostring(executor))
+        end)
+    end
+end)
+local NormalShop = V2:AddLabel("Normal Shop : Loading...")
+local MirageShop = V3:AddLabel("Mirage Shop : Loading...")
+
+local function getStock()
+    local fruits = game:GetService("ReplicatedStorage")
+        .Remotes
+        .CommF_:InvokeServer("GetFruits")
+
+    local stock = {}
+
+    for _,v in pairs(fruits) do
+        if v.OnSale then
+            table.insert(stock, v.Name)
+        end
+    end
+
+    return stock
+end
+
+spawn(function()
+    while wait(3) do
+        pcall(function()
+
+            local stock = getStock()
+
+            local isMirage = workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island")
+
+            NormalShop:SetText("Normal Shop :\n" .. table.concat(stock, ", "))
+
+            if isMirage then
+                MirageShop:SetText("Mirage Shop :\n" .. table.concat(stock, ", "))
+            else
+                MirageShop:SetText("Mirage Shop : ❌ No Mirage")
+            end
+
+        end)
+    end
+end)
+V4:AddButton({
+    Title = "Set Pirate Team",
+    Callback = function()
+        SetTeam("Pirates")
+    end
+})
+
+V4:AddButton({
+    Title = "Set Marine Team",
+    Callback = function()
+        SetTeam("Marines")
+    end
+})
+V4:AddDropdown("TeamSelect", {
+    Title = "Select Team",
+
+    Values = {
+        "Pirates",
+        "Marines"
+    },
+
+    Multi = false,
+    Default = getgenv().SelectedTeam,
+
+    Callback = function(v)
+        SetTeam(v)
+    end
+})
+V5:AddButton({
+    Title = "Redeem All Codes",
+    Description = "Redeem all available codes",
+    Callback = function()
+
+        local Codes = {
+            "KITT_RESET", "Sub2UncleKizaru", "SUB2GAMERROBOT_RESET1", "Sub2Fer999", "Enyu_is_Pro", "JCWK",
+            "StarcodeHEO", "MagicBus", "KittGaming", "Sub2CaptainMaui", "Sub2OfficalNoobie", "TheGreatAce",
+            "Sub2NoobMaster123", "Sub2Daigrock", "Axiore", "StrawHatMaine", "TantaiGaming", "Bluxxy",
+            "SUB2GAMERROBOT_EXP1", "Chandler", "WildDares", "BossBuild", "GetPranked", "EARN_FRUITS",
+            "FIGHT4FRUIT", "NOOB2ADMIN", "CODESLIDE", "ADMINHACKED", "ADMINDARES", "fruitconcepts",
+            "krazydares", "TRIPLEABUSE", "SEATROLLING", "24NOADMIN", "REWARDFUN", "NEWTROLL",
+            "fudd10_v2", "Fudd10", "Bignews", "SECRET_ADMIN"
+        }
+
+        local remote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Redeem")
+
+        for i, code in ipairs(Codes) do
+            task.spawn(function()
+                pcall(function()
+                    remote:InvokeServer(code)
+                end)
+            end)
+
+            task.wait(0.1)
+        end
+
+    end
+})
+local AutoFarm = false
+V6:AddToggle("Auto Attack", {
+    Title = "Auto Attack 1",
+    Default = true,
+
+    Callback = function(v)
+        AutoFarm = (v == true)
+
+        local atk = _G.rz_FastAttack
+        if atk and atk.Settings then
+            atk.Settings.AutoClick = AutoFarm
+        end
+    end
+})
+task.spawn(function()
+    while task.wait(0.05) do
+        if AutoFarm then
+            local atk = _G.rz_FastAttack
+            if atk then
+                atk:BladeHits()
+            end
+        end
+    end
+end)
+
+--// Attack 1
+local FastAttackModule = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Player = Players.LocalPlayer
+
+local function SafeWaitForChild(parent, childName)
+    local success, result = pcall(function()
+        return parent:WaitForChild(childName)
+    end)
+    if not success then
+        warn("SafeWaitForChild failed: " .. tostring(childName))
+    end
+    return result
+end
+
+local Modules = SafeWaitForChild(ReplicatedStorage, "Modules")
+local Net = SafeWaitForChild(Modules, "Net")
+
+local Settings = {
+    AutoClick = true,
+    ClickDelay = 0.01
+}
+
+local FastAttack = {
+    Distance = 100,
+    attackMobs = true,
+    attackPlayers = true,
+    Equipped = nil,
+    Settings = Settings
+}
+
+local RegisterAttack = SafeWaitForChild(Net, "RE/RegisterAttack")
+local RegisterHit = SafeWaitForChild(Net, "RE/RegisterHit")
+
+local function IsAlive(character)
+    return character and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0
+end
+
+local function ProcessEnemies(OthersEnemies, Folder)
+    local BasePart = nil
+    for _, Enemy in ipairs(Folder:GetChildren()) do
+        local Head = Enemy:FindFirstChild("Head")
+        if Head and IsAlive(Enemy) and Player:DistanceFromCharacter(Head.Position) < FastAttack.Distance then
+            if Enemy ~= Player.Character then
+                table.insert(OthersEnemies, {Enemy, Head})
+                BasePart = Head
+            end
+        end
+    end
+    return BasePart
+end
+
+function FastAttack:Attack(BasePart, OthersEnemies)
+    if not BasePart or #OthersEnemies == 0 then return end
+    pcall(function()
+        RegisterAttack:FireServer(Settings.ClickDelay or 0)
+        RegisterHit:FireServer(BasePart, OthersEnemies)
+    end)
+end
+
+function FastAttack:AttackNearest()
+    local OthersEnemies = {}
+    local EnemiesFolder = workspace:FindFirstChild("Enemies")
+    local CharactersFolder = workspace:FindFirstChild("Characters")
+
+    local Part1, Part2
+
+    if EnemiesFolder then Part1 = ProcessEnemies(OthersEnemies, EnemiesFolder) end
+    if CharactersFolder then Part2 = ProcessEnemies(OthersEnemies, CharactersFolder) end
+
+    local character = Player.Character
+    if not character then return end
+
+    local equippedWeapon = character:FindFirstChildOfClass("Tool")
+
+    if equippedWeapon and equippedWeapon:FindFirstChild("LeftClickRemote") then
+        for _, enemyData in ipairs(OthersEnemies) do
+            local enemy = enemyData[1]
+            if enemy and enemy:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("HumanoidRootPart") then
+                local direction = (enemy.HumanoidRootPart.Position - character:GetPivot().Position).Unit
+                pcall(function()
+                    equippedWeapon.LeftClickRemote:FireServer(direction, 1)
+                end)
+            end
+        end
+    elseif #OthersEnemies > 0 then
+        FastAttack:Attack(Part1 or Part2, OthersEnemies)
+    end
+end
+
+function FastAttack:BladeHits()
+    local Equipped = IsAlive(Player.Character) and Player.Character:FindFirstChildOfClass("Tool")
+    if Equipped and Equipped.ToolTip ~= "Gun" then
+        self:AttackNearest()
+    end
+end
+
+task.spawn(function()
+    while task.wait(FastAttack.Settings.ClickDelay) do
+        if FastAttack.Settings.AutoClick then
+            FastAttack:BladeHits()
+        end
+    end
+end)
+task.PrimaryPart.Anchored = true
+_G.rz_FastAttack = FastAttack
+_ENV.rz_FastAttack = FastAttack
+
+FastAttackModule.FastAttack = FastAttack
+
+return FastAttackModule
