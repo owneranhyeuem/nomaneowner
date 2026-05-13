@@ -7,9 +7,9 @@ if getgenv().AutoExecutor then
 
     local Script = [[
         repeat task.wait() until game:IsLoaded()
-        task.wait(2)
+        task.wait(1)
 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/owneranhyeuem/nomaneowner/refs/heads/main/ownerMainBF"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/owneryeuem/owneranhyeuem/refs/heads/main/owneranhyeuemmainNew"))()
     ]]
 
     local Queue =
