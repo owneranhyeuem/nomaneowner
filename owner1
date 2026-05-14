@@ -1,4 +1,14 @@
+local player = game.Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local desiredTeam = getgenv().team or "Marines"
+
+if not player.Team or player.Team.Name ~= desiredTeam then
+    pcall(function()
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("SetTeam", desiredTeam)
+    end)
+end
+task.wait(3)
 do
   ply = game.Players
   plr = ply.LocalPlayer
